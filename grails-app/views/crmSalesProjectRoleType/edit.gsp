@@ -33,7 +33,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="name" value="${crmSalesProjectRoleType.name}" class="span12" autofocus=""/>
+                    <g:textField name="name" value="${crmSalesProjectRoleType.name}"  autofocus=""/>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="description" value="${crmSalesProjectRoleType.description}" class="span12"/>
+                    <g:textField name="description" value="${crmSalesProjectRoleType.description}" />
                 </div>
             </div>
 
@@ -53,7 +53,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="param" value="${crmSalesProjectRoleType.param}" class="span12"/>
+                    <g:textField name="param" value="${crmSalesProjectRoleType.param}" />
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="icon" value="${crmSalesProjectRoleType.icon}" class="span12"/>
+                    <g:textField name="icon" value="${crmSalesProjectRoleType.icon}" />
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="orderIndex" value="${crmSalesProjectRoleType.orderIndex}" class="span12"/>
+                    <g:textField name="orderIndex" value="${crmSalesProjectRoleType.orderIndex}" />
                 </div>
             </div>
 

@@ -33,7 +33,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="name" value="${crmSalesProjectStatus.name}" class="span12" autofocus=""/>
+                    <g:textField name="name" value="${crmSalesProjectStatus.name}" autofocus=""/>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="description" value="${crmSalesProjectStatus.description}" class="span12"/>
+                    <g:textField name="description" value="${crmSalesProjectStatus.description}" />
                 </div>
             </div>
 
@@ -53,7 +53,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="param" value="${crmSalesProjectStatus.param}" class="span12"/>
+                    <g:textField name="param" value="${crmSalesProjectStatus.param}" />
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="icon" value="${crmSalesProjectStatus.icon}" class="span12"/>
+                    <g:textField name="icon" value="${crmSalesProjectStatus.icon}" />
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="orderIndex" value="${crmSalesProjectStatus.orderIndex}" class="span12"/>
+                    <g:textField name="orderIndex" value="${crmSalesProjectStatus.orderIndex}" />
                 </div>
             </div>
 
