@@ -25,23 +25,9 @@ Sales and lead management user interface for GR8 CRM.
 
     def doWithApplicationContext = { applicationContext ->
         def crmPluginService = applicationContext.crmPluginService
-        def crmContactService = applicationContext.containsBean('crmContactService') ? applicationContext.crmContactService : null
         crmPluginService.registerView('crmMessage', 'index', 'tabs',
                 [id: "crmSalesProject", index: 300, label: "crmSalesProject.label",
                         template: '/crmSalesProject/messages', plugin: "crm-sales"]
         )
-        if (crmContactService) {
-            crmPluginService.registerView('crmContact', 'show', 'tabs',
-                    [id: "opportunities", permission: "crmSalesProject:list", label: "crmSalesProject.list.label", template: '/crmSalesProject/projects', plugin: "crm-sales", model: {
-                        def result
-                        if (crmContact.company) {
-                            result = CrmSalesProject.findAllByCustomer(crmContact, [sort: 'number', order: 'asc'])
-                        } else {
-                            result = CrmSalesProject.findAllByContact(crmContact, [sort: 'number', order: 'asc'])
-                        }
-                        [result: result, totalCount: result.size()]
-                    }]
-            )
-        }
     }
 }
