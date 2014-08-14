@@ -25,7 +25,7 @@
             <label class="control-label"><g:message code="crmSalesProjectRole.type.label"/></label>
 
             <div class="controls">
-                <g:select name="type" value="${bean.type?.param}" from="${roleTypes}" optionKey="param"
+                <g:select name="type.id" value="${bean.type.id}" from="${roleTypes}" optionKey="id"
                           class="input-large"/>
             </div>
         </div>

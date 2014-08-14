@@ -283,7 +283,6 @@ class CrmSalesProjectController {
             return
         }
         if (request.post) {
-            println params
             CrmSalesProjectRole.withTransaction {
                 bindData(roleInstance, params, [include: ['type', 'description']])
                 roleInstance.save(flush:true)
