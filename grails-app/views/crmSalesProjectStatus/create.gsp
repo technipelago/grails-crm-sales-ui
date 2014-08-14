@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main">
-    <g:set var="entityName" value="${message(code: 'crmSalesProjectStatus.label', default: 'Sales Status')}"/>
+    <g:set var="entityName" value="${message(code: 'crmSalesProjectStatus.label', default: 'Project Status')}"/>
     <title><g:message code="crmSalesProjectStatus.create.title" args="[entityName]"/></title>
 </head>
 
@@ -26,17 +26,68 @@
 
         <g:form class="form-horizontal" action="create">
 
-            <f:with bean="crmSalesProjectStatus">
-                <f:field property="name" input-autofocus=""/>
-                <f:field property="description"/>
-                <f:field property="param"/>
-                <f:field property="icon"/>
-                <f:field property="orderIndex"/>
-                <f:field property="enabled"/>
-            </f:with>
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.name.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="name" value="${crmSalesProjectStatus.name}" class="span12" autofocus=""/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.description.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="description" value="${crmSalesProjectStatus.description}" class="span12"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.param.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="param" value="${crmSalesProjectStatus.param}" class="span12"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.icon.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="icon" value="${crmSalesProjectStatus.icon}" class="span12"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.orderIndex.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="orderIndex" value="${crmSalesProjectStatus.orderIndex}" class="span12"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <g:message code="crmSalesProjectStatus.enabled.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:checkBox name="enabled" value="true" checked="${crmSalesProjectStatus.enabled}"/>
+                </div>
+            </div>
 
             <div class="form-actions">
-                <crm:button visual="primary" icon="icon-ok icon-white" label="crmSalesProjectStatus.button.save.label"/>
+                <crm:button visual="success" icon="icon-ok icon-white" label="crmSalesProjectStatus.button.save.label"/>
                 <crm:button type="link" action="list"
                             icon="icon-remove"
                             label="crmSalesProjectStatus.button.cancel.label"/>

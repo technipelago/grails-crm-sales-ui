@@ -1,10 +1,11 @@
 <%@ page import="grails.plugins.crm.core.DateUtils; grails.plugins.crm.sales.CrmSalesProject" %>
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'crmSalesProject.label', default: 'Sales Opportunity')}"/>
     <title><g:message code="crmSalesProject.show.title" args="[entityName, crmSalesProject]"/></title>
+    <r:require module="select2"/>
     <r:script>
         $(document).ready(function () {
             $("a.crm-change-status").click(function(ev) {
@@ -12,6 +13,67 @@
                 var status = $(this).data('crm-id');
                 $.post("${createLink(action: 'changeStatus', id: crmSalesProject.id)}", {status: status}, function(data) {
 
+                });
+            });
+
+            $("#role-list a.crm-delete").click(function(ev) {
+                ev.preventDefault();
+
+                if(confirm("${message(code: 'crmSalesProjectRole.delete.confirm', default: 'Remove role?')}")) {
+                    var id = $(this).data("crm-id");
+                    $.post("${createLink(action: 'deleteRole', id: crmSalesProject.id)}", {r: id}, function(data) {
+                        window.location.href = "${createLink(action: 'show', id: crmSalesProject.id, fragment: 'roles')}";
+                    });
+                }
+            });
+            $("#role-list a.crm-edit").click(function(ev) {
+                ev.preventDefault();
+                var $modal = $("#roleModal");
+                var id = $(this).data('crm-id');
+                $modal.load("${createLink(action: 'editRole', id: crmSalesProject.id)}?r=" + id, function() {
+                    $modal.modal('show');
+                });
+            });
+            $("#add-role").click(function(ev) {
+                ev.preventDefault();
+                var $modal = $("#roleModal");
+                $modal.load("${createLink(action: 'addRole', id: crmSalesProject.id)}", function() {
+
+                    var $searchField = $('input[name="related"]', $modal);
+
+                    $searchField.select2({
+                        ajax: {
+                            url: "${createLink(controller: 'crmContact', action: 'autocompleteContact')}",
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    q: term, // search term
+                                    limit: 10
+                                };
+                            },
+                            results: function (data, page) {
+                                return {results: data};
+                            }
+                        },
+                        placeholder: "${message(code: 'crmSalesProjectRole.create.placeholder')}",
+                        allowClear: true,
+                        minimumInputLength: 1,
+                        createSearchChoice: function(term) {
+                            var sanitized = term.replace(/,/g, " ")
+                            return {id: sanitized, name: sanitized};
+                        },
+                        createSearchChoicePosition: "top",
+                        escapeMarkup: function (m) { return m; },
+                        formatResult: function(data) { return data.recent ? '<strong>' + data.name + '</strong>' : data.name; },
+                        formatSelection: function(data) { return data.name; },
+                        formatNoMatches: function (term) { return "${message(code: 'crmContact.search.noresult')}"; },
+                        formatInputTooShort: function (input, min) { return "${message(code: 'crmContact.search.help')}"; },
+                        formatInputTooLong: function (input, max) { return "${message(code: 'crmContact.search.help')}"; },
+                        formatLoadMore: function (pageNumber) { return "${message(code: 'crmContact.search.loading')}"; },
+                        formatSearching: function () { return "${message(code: 'crmContact.search.searching')}"; }
+                    });
+
+                    $modal.modal('show');
                 });
             });
         });
@@ -27,13 +89,19 @@
     <h1>
         ${crmSalesProject.encodeAsHTML()}
         <crm:favoriteIcon bean="${crmSalesProject}"/>
-        <small>${crmSalesProject.customer?.encodeAsHTML()}</small>
+        <small>${customer?.encodeAsHTML()}</small>
     </h1>
 </header>
 
 <div class="tabbable">
 <ul class="nav nav-tabs">
     <li class="active"><a href="#main" data-toggle="tab"><g:message code="crmSalesProject.tab.main.label"/></a>
+    </li>
+    <li>
+        <a href="#roles" data-toggle="tab">
+            <g:message code="crmSalesProject.tab.roles.label"/>
+            <crm:countIndicator count="${roles.size()}"/>
+        </a>
     </li>
     <crm:pluginViews location="tabs" var="view">
         <crm:pluginTab id="${view.id}" label="${view.label}" count="${view.model?.totalCount}"/>
@@ -73,29 +141,29 @@
     <div class="span3">
         <dl>
 
-            <g:if test="${crmSalesProject.customer}">
+            <g:if test="${customer}">
                 <dt><g:message code="crmSalesProject.customer.label" default="Customer"/></dt>
 
                 <dd>
-                    <g:link mapping="crm-contact-show" id="${crmSalesProject.customer?.id}">
-                        <g:fieldValue bean="${crmSalesProject}" field="customer"/>
+                    <g:link mapping="crm-contact-show" id="${customer?.id}">
+                        <g:fieldValue bean="${customer}" field="name"/>
                     </g:link>
                     <div class="muted">
-                        <g:fieldValue bean="${crmSalesProject.customer}" field="address"/>
+                        <g:fieldValue bean="${customer}" field="address"/>
                     </div>
                 </dd>
 
             </g:if>
 
-            <g:if test="${crmSalesProject.contact}">
+            <g:if test="${contact}">
                 <dt><g:message code="crmSalesProject.contact.label" default="Contact"/></dt>
 
                 <dd>
-                    <g:link mapping="crm-contact-show" id="${crmSalesProject.contact?.id}">
-                        <g:fieldValue bean="${crmSalesProject}" field="contact"/>
+                    <g:link mapping="crm-contact-show" id="${contact.id}">
+                        <g:fieldValue bean="${contact}" field="name"/>
                     </g:link>
                     <div class="muted">
-                        <g:fieldValue bean="${crmSalesProject.contact}" field="telephone"/>
+                        <g:fieldValue bean="${contact}" field="telephone"/>
                     </div>
                 </dd>
 
@@ -263,6 +331,22 @@
 
 </div>
 
+<div class="tab-pane" id="roles">
+    <tmpl:roles bean="${crmSalesProject}" list="${roles}"/>
+
+    <g:form>
+        <g:hiddenField name="id" value="${crmContact?.id}"/>
+        <div class="form-actions btn-toolbar">
+            <crm:hasPermission permission="crmSalesProject:edit">
+                <g:link action="addRole" id="${crmSalesProject.id}" class="btn btn-success" elementId="add-role">
+                    <i class="icon-resize-small icon-white"></i>
+                    <g:message code="crmSalesProjectRole.button.create.label" default="Add Role"/>
+                </g:link>
+            </crm:hasPermission>
+        </div>
+    </g:form>
+</div>
+
 <crm:pluginViews location="tabs" var="view">
     <div class="tab-pane tab-${view.id}" id="${view.id}">
         <g:render template="${view.template}" model="${view.model}" plugin="${view.plugin}"/>
@@ -284,6 +368,8 @@
 
 </div>
 </div>
+
+<div class="modal hide fade" id="roleModal"></div>
 
 </body>
 </html>

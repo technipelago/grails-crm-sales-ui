@@ -6,6 +6,7 @@ import grails.plugins.crm.core.DateUtils
 import grails.plugins.crm.core.TenantUtils
 import grails.plugins.crm.core.WebUtils
 
+import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.TimeoutException
 
 /**
@@ -87,7 +88,8 @@ class CrmSalesProjectController {
             return
         }
         def metadata = [statusList: crmSalesService.listSalesProjectStatus(null)]
-        [crmSalesProject: crmSalesProject, metadata: metadata, selection: params.getSelectionURI()]
+        [crmSalesProject: crmSalesProject, customer: crmSalesProject.customer, contact: crmSalesProject.contact,
+         metadata       : metadata, roles: crmSalesProject.roles.sort{it.type.orderIndex}, selection: params.getSelectionURI()]
     }
 
     def create() {
@@ -224,6 +226,99 @@ class CrmSalesProjectController {
         }
 
         return [company, contact]
+    }
+
+    def addRole(Long id, String type, String description) {
+        def crmSalesProject = crmSalesService.getSalesProject(id)
+        if (!crmSalesProject) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        if (request.post) {
+            def related = params.related
+            def relatedContact
+            if (related?.isNumber()) {
+                relatedContact = crmContactService.getContact(Long.valueOf(related))
+                if (!relatedContact) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND)
+                    return
+                }
+                if (relatedContact.tenantId != crmSalesProject.tenantId) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN)
+                    return
+                }
+            } else if (related) {
+                if (related.startsWith('@')) {
+                    relatedContact = crmContactService.createPerson(firstName: related[1..-1], true)
+                } else if (related.endsWith('@')) {
+                    relatedContact = crmContactService.createPerson(firstName: related[0..-2], true)
+                } else {
+                    relatedContact = crmContactService.createCompany(name: related, true)
+                }
+            }
+
+            if (relatedContact) {
+                def roleInstance = crmSalesService.addRole(crmSalesProject, relatedContact, type, description)
+                flash.success = "${roleInstance} skapad"
+            } else {
+                flash.warning = "No role created"
+            }
+            redirect(action: 'show', id: id, fragment: "roles")
+        } else {
+            def role = new CrmSalesProjectRole(project: crmSalesProject)
+            render template: 'addRole', model: [bean     : role, crmSalesProject: crmSalesProject,
+                                                roleTypes: crmSalesService.listSalesProjectRoleType(null)]
+        }
+    }
+
+    def editRole(Long id, Long r) {
+        def crmSalesProject = crmSalesService.getSalesProject(id)
+        def roleInstance = CrmSalesProjectRole.get(r)
+        if (!(roleInstance && crmSalesProject)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        if (roleInstance.projectId != crmSalesProject.id) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN)
+            return
+        }
+        if (request.post) {
+            println params
+            CrmSalesProjectRole.withTransaction {
+                bindData(roleInstance, params, [include: ['type', 'description']])
+                roleInstance.save(flush:true)
+            }
+            redirect(action: 'show', id: id, fragment: "roles")
+        } else {
+            render template: 'editRole', model: [crmSalesProject: crmSalesProject, bean: roleInstance,
+                                                 roleTypes      : crmSalesService.listSalesProjectRoleType(null)]
+        }
+    }
+
+    def deleteRole(Long id, Long r) {
+        def crmSalesProject = crmSalesService.getSalesProject(id)
+        def roleInstance = CrmSalesProjectRole.get(r)
+        if (!(roleInstance && crmSalesProject)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        if (roleInstance.projectId != crmSalesProject.id) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN)
+            return
+        }
+        def tombstone = roleInstance.toString()
+        def msg = message(code: 'crmSalesProjectRole.deleted.message', default: 'Role {1} deleted', args: ['Role', tombstone])
+
+        roleInstance.delete(flush: true)
+
+        flash.warning = msg
+
+        if (request.xhr) {
+            def result = [id: id, r: r, message: msg, role: tombstone]
+            render result as JSON
+        } else {
+            redirect(action: 'show', id: id, fragment: "roles")
+        }
     }
 
     def autocompleteUsername() {
