@@ -175,7 +175,7 @@ class CrmSalesProjectController {
                     if (!params.currency) {
                         params.currency = crmTenant.getOption('currency') ?: (grailsApplication.config.crm.currency.default ?: 'EUR')
                     }
-                    fixCustomer(params)
+                    //fixCustomer(params)
                     bindDate(crmSalesProject, 'date1', params.remove('date1'), currentUser?.timezone)
                     bindDate(crmSalesProject, 'date2', params.remove('date2'), currentUser?.timezone)
                     bindDate(crmSalesProject, 'date3', params.remove('date3'), currentUser?.timezone)

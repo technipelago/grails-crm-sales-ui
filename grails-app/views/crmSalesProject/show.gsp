@@ -275,7 +275,11 @@
             </button>
             <ul class="dropdown-menu">
                 <g:each in="${metadata.statusList}" var="status">
-                    <li><a href="#" data-crm-id="${status.ident()}" class="crm-change-status">${status.encodeAsHTML()}</a></li>
+                    <li class="${crmSalesProject.status == status ? 'disabled' : ''}">
+                        <a href="#" data-crm-id="${status.ident()}" class="crm-change-status">
+                            ${message(code: 'crmSalesProject.update.status.message', default: 'Change status to {1}', params: [crmSalesProject, status])}
+                        </a>
+                    </li>
                 </g:each>
             </ul>
         </crm:button>
