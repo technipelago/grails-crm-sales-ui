@@ -1,3 +1,4 @@
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <table id="role-list" class="table table-striped">
     <thead>
     <tr>
@@ -19,7 +20,7 @@
                     ${fieldValue(bean: role, field: "type")}
                 </a>
                 <g:if test="${role.description}">
-                    <i class="icon-comment"></i>
+                    <i class="icon-comment" title="${StringUtils.abbreviate(role.description, 80).encodeAsHTML()}"></i>
                 </g:if>
             </td>
 
