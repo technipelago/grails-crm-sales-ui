@@ -54,7 +54,7 @@
 </table>
 
 <div class="form-actions btn-toolbar">
-    <crm:button type="link" group="true" action="create" visual="success"
+    <crm:button type="link" group="true" controller="crmSalesProject" action="create" visual="success"
                 icon="icon-file icon-white"
                 label="crmSalesProject.button.create.label"
                 title="crmSalesProject.button.create.help"

@@ -10,9 +10,9 @@
         $(document).ready(function () {
             $("a.crm-change-status").click(function(ev) {
                 ev.preventDefault();
-                var status = $(this).data('crm-id');
+                var status = $(this).data('crm-status');
                 $.post("${createLink(action: 'changeStatus', id: crmSalesProject.id)}", {status: status}, function(data) {
-
+                    window.location.reload();
                 });
             });
 
@@ -276,8 +276,8 @@
             <ul class="dropdown-menu">
                 <g:each in="${metadata.statusList}" var="status">
                     <li class="${crmSalesProject.status == status ? 'disabled' : ''}">
-                        <a href="#" data-crm-id="${status.ident()}" class="crm-change-status">
-                            ${message(code: 'crmSalesProject.update.status.message', default: 'Change status to {1}', params: [crmSalesProject, status])}
+                        <a href="#" data-crm-status="${status.param}" class="crm-change-status">
+                            ${message(code: 'crmSalesProject.update.status.message', default: 'Change status to {1}', args: [crmSalesProject, status])}
                         </a>
                     </li>
                 </g:each>

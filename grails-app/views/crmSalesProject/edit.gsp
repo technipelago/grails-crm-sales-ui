@@ -60,7 +60,7 @@
                                 </label>
 
                                 <div class="controls">
-                                    <g:textField name="name" value="${crmSalesProject.name}" class="span11"/>
+                                    <g:textField name="name" value="${crmSalesProject.name}" class="span11" autofocus=""/>
                                 </div>
                             </div>
 

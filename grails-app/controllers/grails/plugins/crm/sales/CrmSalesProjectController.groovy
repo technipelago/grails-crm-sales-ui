@@ -5,6 +5,7 @@ import grails.plugins.crm.contact.CrmContact
 import grails.plugins.crm.core.DateUtils
 import grails.plugins.crm.core.TenantUtils
 import grails.plugins.crm.core.WebUtils
+import grails.plugins.crm.core.CrmValidationException
 
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.TimeoutException
@@ -89,7 +90,9 @@ class CrmSalesProjectController {
         }
         def metadata = [statusList: crmSalesService.listSalesProjectStatus(null)]
         [crmSalesProject: crmSalesProject, customer: crmSalesProject.customer, contact: crmSalesProject.contact,
-         metadata       : metadata, roles: crmSalesProject.roles.sort{it.type.orderIndex}, selection: params.getSelectionURI()]
+         metadata       : metadata, roles: crmSalesProject.roles.sort {
+            it.type.orderIndex
+        }, selection    : params.getSelectionURI()]
     }
 
     def create() {
@@ -117,28 +120,34 @@ class CrmSalesProjectController {
                 bindDate(crmSalesProject, 'date2', params.remove('date2'), currentUser?.timezone)
                 bindDate(crmSalesProject, 'date3', params.remove('date3'), currentUser?.timezone)
                 bindDate(crmSalesProject, 'date4', params.remove('date4'), currentUser?.timezone)
-                bindData(crmSalesProject, params) // TODO SECURITY use white list!
+                bindData(crmSalesProject, params, [include: CrmSalesProject.BIND_WHITELIST])
                 crmSalesProject.tenantId = tenant
                 if (!crmSalesProject.username) {
                     crmSalesProject.username = currentUser?.username
                 }
-                return [crmSalesProject: crmSalesProject, metadata: metadata, user: currentUser]
-            case 'POST':
-                def ok = true
-                CrmSalesProject.withTransaction { tx ->
-                    fixCustomer(params)
-                    bindDate(crmSalesProject, 'date1', params.remove('date1'), currentUser?.timezone)
-                    bindDate(crmSalesProject, 'date2', params.remove('date2'), currentUser?.timezone)
-                    bindDate(crmSalesProject, 'date3', params.remove('date3'), currentUser?.timezone)
-                    bindDate(crmSalesProject, 'date4', params.remove('date4'), currentUser?.timezone)
-                    bindData(crmSalesProject, params) // TODO SECURITY use white list!
-                    if (!crmSalesProject.save(flush: true)) {
-                        ok = false
-                        tx.setRollbackOnly()
+                def customer = crmSalesProject.customer
+                def contact = null
+                if (!customer) {
+                    def customerId = params.long('customer')
+                    if (customerId) {
+                        customer = crmContactService.getContact(customerId)
                     }
                 }
-
-                println ">>>>> $ok ${crmSalesProject.hasErrors()}"
+                return [crmSalesProject: crmSalesProject, metadata: metadata, user: currentUser, customer: customer, contact: contact]
+            case 'POST':
+                def customer
+                def contact
+                def ok = false
+                try {
+                    crmSalesProject = crmSalesService.saveSalesProject(crmSalesProject, params)
+                    customer = crmSalesProject.customer
+                    contact = crmSalesProject.contact
+                    ok = true
+                } catch (CrmValidationException e) {
+                    crmSalesProject = e[0]
+                    customer = e[1]
+                    contact = e[2]
+                }
 
                 if (ok) {
                     event(for: "crmSalesProject", topic: "created", fork: false, data: [id: crmSalesProject.id, tenant: crmSalesProject.tenantId, user: currentUser?.username])
@@ -146,7 +155,8 @@ class CrmSalesProjectController {
                     redirect action: 'show', id: crmSalesProject.id
                 } else {
                     def user = crmSecurityService.getUserInfo(params.username ?: crmSalesProject.username)
-                    render view: 'create', model: [crmSalesProject: crmSalesProject, metadata: metadata, user: user]
+                    render view: 'create', model: [crmSalesProject: crmSalesProject, metadata: metadata, user: user,
+                                                   customer: customer, contact: contact]
                 }
                 break
         }
@@ -175,7 +185,7 @@ class CrmSalesProjectController {
                     if (!params.currency) {
                         params.currency = crmTenant.getOption('currency') ?: (grailsApplication.config.crm.currency.default ?: 'EUR')
                     }
-                    //fixCustomer(params)
+                    //crmSalesService.fixCustomerParams(params)
                     bindDate(crmSalesProject, 'date1', params.remove('date1'), currentUser?.timezone)
                     bindDate(crmSalesProject, 'date2', params.remove('date2'), currentUser?.timezone)
                     bindDate(crmSalesProject, 'date3', params.remove('date3'), currentUser?.timezone)
@@ -197,35 +207,6 @@ class CrmSalesProjectController {
                 }
                 break
         }
-    }
-
-    private List fixCustomer(Map params) {
-        def company = params['customer.id'] ? CrmContact.get(params['customer.id']) : null
-        def contact = params['contact.id'] ? CrmContact.get(params['contact.id']) : null
-
-        // Company is not specified but the selected person is associated with a company (parent)
-        // Set params as if the user had selected the person's parent in the company field.
-        if (company == null && contact?.parent != null) {
-            company = contact.parent
-            params['customer.name'] = company.name
-            params['customer.id'] = company.id
-        }
-
-        // A company name is specified but it's not an existing company.
-        // Create a new company.
-        if (params['customer.name'] && !company) {
-            company = crmContactService.createCompany(name: params['customer.name']).save(failOnError: true, flush: true)
-            params['customer.id'] = company.id
-        }
-
-        // A person name is specified but it's not an existing person.
-        // Create a new person.
-        if (params['contact.name'] && !contact) {
-            contact = crmContactService.createPerson([firstName: params['contact.name'], parent: company]).save(failOnError: true, flush: true)
-            params['contact.id'] = contact.id
-        }
-
-        return [company, contact]
     }
 
     def addRole(Long id, String type, String description) {
@@ -285,7 +266,7 @@ class CrmSalesProjectController {
         if (request.post) {
             CrmSalesProjectRole.withTransaction {
                 bindData(roleInstance, params, [include: ['type', 'description']])
-                roleInstance.save(flush:true)
+                roleInstance.save(flush: true)
             }
             redirect(action: 'show', id: id, fragment: "roles")
         } else {
@@ -317,6 +298,31 @@ class CrmSalesProjectController {
             render result as JSON
         } else {
             redirect(action: 'show', id: id, fragment: "roles")
+        }
+    }
+
+    def changeStatus(Long id, String status) {
+        def crmSalesProject = crmSalesService.getSalesProject(id)
+        if (!crmSalesProject) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        def newStatus = crmSalesService.getSalesProjectStatus(status)
+        if (!newStatus) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+
+        crmSalesProject.status = newStatus
+        crmSalesProject.save()
+
+        flash.success = "Status updated to $newStatus"
+
+        if (request.xhr) {
+            def result = crmSalesProject.dao
+            render result as JSON
+        } else {
+            redirect(action: 'show', id: id)
         }
     }
 
