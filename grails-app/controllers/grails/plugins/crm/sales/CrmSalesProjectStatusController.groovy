@@ -29,14 +29,6 @@ class CrmSalesProjectStatusController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-    static navigation = [
-            [group: 'admin',
-                    order: 330,
-                    title: 'crmSalesProjectStatus.label',
-                    action: 'index'
-            ]
-    ]
-
     def selectionService
     def crmSalesService
 

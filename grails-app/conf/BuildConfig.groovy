@@ -45,9 +45,11 @@ grails.project.dependency.resolution = {
         compile ":decorator:1.1"
         compile ":user-tag:0.6"
 
-        compile ":crm-feature:2.4.0"
+        compile ":crm-feature:2.4.1"
         compile ":crm-ui-bootstrap:2.4.0"
         compile ":crm-contact-ui:2.4.0"
-        compile ":crm-sales:2.4.0-SNAPSHOT"
+        //compile ":crm-sales:2.4.0-SNAPSHOT"
     }
 }
+
+grails.plugin.location.'crm-sales' = '../crm-sales'

@@ -19,8 +19,9 @@
             useCache: false,
             filter: false,
             onItemSelect: function(item) {
+                console.log('item', item.data);
                 var id = item.data[0];
-                var name = item.data[3];
+                var name = item.data[1];
                 $("input[name='customer.id']").val(id);
                 $("input[name='customer.name']").val(name);
                 $("header h1 small").text(name);
@@ -51,7 +52,7 @@
             extraParams: {},
             onItemSelect: function(item) {
                 $("input[name='contact.id']").val(item.data[0]);
-                $("input[name='contact.name']").val(item.data[3]);
+                $("input[name='contact.name']").val(item.data[1]);
             },
             onNoMatch: function() {
                 $("input[name='contact.id']").val('');
@@ -101,19 +102,25 @@
 
                         <div class="span3">
                             <div class="row-fluid">
-                                <f:field property="customer" label="crmSalesProject.customer.label">
-                                    <g:textField name="customer.name" value="${customer?.name}"
-                                                 autocomplete="off" autofocus="" class="span11"/>
-                                    <g:hiddenField name="customer.id" value="${customer?.id}"/>
-                                </f:field>
-                                <f:field property="contact" label="crmSalesProject.contact.label">
-                                    <g:textField name="contact.name"
-                                                 value="${contact?.name}"
-                                                 autocomplete="off"
-                                                 class="span11"/>
-                                    <g:hiddenField name="contact.id"
-                                                   value="${contact?.id}"/>
-                                </f:field>
+                                <div class="control-group">
+                                    <label class="control-label"><g:message code="crmSalesProject.customer.label"/></label>
+                                    <div class="controls">
+                                        <g:textField name="customer.name" value="${customer?.name}"
+                                                     autocomplete="off" autofocus="" class="span11"/>
+                                        <g:hiddenField name="customer.id" value="${customer?.id}"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label"><g:message code="crmSalesProject.contact.label"/></label>
+                                    <div class="controls">
+                                        <g:textField name="contact.name"
+                                                     value="${contact?.name}"
+                                                     autocomplete="off"
+                                                     class="span11"/>
+                                        <g:hiddenField name="contact.id"
+                                                       value="${contact?.id}"/>
+                                    </div>
+                                </div>
 
                                 <f:field property="username">
                                     <g:select name="username" from="${metadata.userList}" optionKey="username"

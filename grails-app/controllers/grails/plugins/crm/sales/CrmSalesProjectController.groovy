@@ -6,6 +6,7 @@ import grails.plugins.crm.core.DateUtils
 import grails.plugins.crm.core.TenantUtils
 import grails.plugins.crm.core.WebUtils
 import grails.plugins.crm.core.CrmValidationException
+import grails.transaction.Transactional
 
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.TimeoutException
@@ -22,6 +23,7 @@ class CrmSalesProjectController {
     def crmContactService
     def selectionService
     def userTagService
+    def pluginManager
 
     def index() {
         // If any query parameters are specified in the URL, let them override the last query stored in session.
@@ -95,6 +97,7 @@ class CrmSalesProjectController {
         }, selection    : params.getSelectionURI()]
     }
 
+    @Transactional
     def create() {
         def crmTenant = crmSecurityService.getCurrentTenant()
         def tenant = crmTenant.id
@@ -139,7 +142,7 @@ class CrmSalesProjectController {
                 def contact
                 def ok = false
                 try {
-                    crmSalesProject = crmSalesService.saveSalesProject(crmSalesProject, params)
+                    crmSalesProject = crmSalesService.save(crmSalesProject, params)
                     customer = crmSalesProject.customer
                     contact = crmSalesProject.contact
                     ok = true
@@ -162,6 +165,7 @@ class CrmSalesProjectController {
         }
     }
 
+    @Transactional
     def edit() {
         def crmTenant = crmSecurityService.getCurrentTenant()
         def tenant = crmTenant.id
@@ -209,6 +213,7 @@ class CrmSalesProjectController {
         }
     }
 
+    @Transactional
     def addRole(Long id, String type, String description) {
         def crmSalesProject = crmSalesService.getSalesProject(id)
         if (!crmSalesProject) {
@@ -252,6 +257,7 @@ class CrmSalesProjectController {
         }
     }
 
+    @Transactional
     def editRole(Long id, Long r) {
         def crmSalesProject = crmSalesService.getSalesProject(id)
         def roleInstance = CrmSalesProjectRole.get(r)
@@ -275,6 +281,7 @@ class CrmSalesProjectController {
         }
     }
 
+    @Transactional
     def deleteRole(Long id, Long r) {
         def crmSalesProject = crmSalesService.getSalesProject(id)
         def roleInstance = CrmSalesProjectRole.get(r)
@@ -301,6 +308,7 @@ class CrmSalesProjectController {
         }
     }
 
+    @Transactional
     def changeStatus(Long id, String status) {
         def crmSalesProject = crmSalesService.getSalesProject(id)
         if (!crmSalesProject) {
@@ -324,6 +332,33 @@ class CrmSalesProjectController {
         } else {
             redirect(action: 'show', id: id)
         }
+    }
+
+    def autocompleteContact() {
+        if (params.parent) {
+            if(pluginManager.hasGrailsPlugin('crmContactLite')) {
+                params.parent = params.long('parent')
+            } else {
+                params.related = params.parent
+                params.parent = null
+            }
+        }
+        if (params.related) {
+            params.related = params.long('related')
+        }
+        if (params.company) {
+            params.company = params.boolean('company')
+        }
+        if (params.person) {
+            params.person = params.boolean('person')
+        }
+        println params
+        def result = crmContactService.list(params, [max: 100]).collect {
+            def contact = it.primaryContact ?: it.parent
+            [it.fullName, it.id, it.toString(), contact?.id, contact?.toString(), it.firstName, it.lastName, it.address.toString(), it.telephone, it.email]
+        }
+        WebUtils.shortCache(response)
+        render result as JSON
     }
 
     def autocompleteUsername() {
