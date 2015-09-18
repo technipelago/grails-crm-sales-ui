@@ -251,7 +251,7 @@
     <div class="row-fluid">
         <div class="span7">
             <p style="background-color: #fefefe; border: 1px solid #f0f0f0; border-radius: 3px;">
-                <g:decorate include="markdown">${crmSalesProject.description}</g:decorate>
+                <g:decorate>${crmSalesProject.description}</g:decorate>
             </p>
         </div>
     </div>

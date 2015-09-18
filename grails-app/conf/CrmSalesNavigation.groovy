@@ -3,7 +3,7 @@ navigation = {
         crmSales controller: 'crmSalesProject', action: 'index', order: 300
     }
     admin(global: true) {
-        crmSalesProjectRoleType controller: 'crmProjectRoleType', action: 'list'
-        crmSalesProjectStatus controller: 'crmProjectStatus', action: 'list'
+        crmSalesProjectRoleType controller: 'crmSalesProjectRoleType', action: 'list'
+        crmSalesProjectStatus controller: 'crmSalesProjectStatus', action: 'list'
     }
 }
