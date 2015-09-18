@@ -32,8 +32,51 @@ that focus on one specific domain, for example *contact*, *project* or *document
 
 == Sales/Lead User Interface Plugin
 
-The +crm-sales-ui+ plugin is a companion plugin to the +crm-sales+ plugin.
-It provides a Twitter Bootstrap based user interface for managing leads and sales opportunities.
+The `crm-sales-ui` plugin provides a Twitter Bootstrap user interface for managing leads and sales opportunities.
+It depends on the `crm-sales` plugin for low level services and persistence.
+
+== Sales staff
+
+When creating or updating a sales project you can select the responsible sales representative from a dropdown list.
+This dropdown list is populated using an application event `crmTenant.getUsers`. You must add an event listener in
+one of your application services that listens to this event and returns a list of users (sales staff).
+
+For a list of *all* registered users you can add something like this to a service in your application:
+
+[source,groovy]
+.MyApplicationService.groovy
+----
+@Listener(namespace="crmTenant", topic="getUsers")
+def listAllUsersInTenant(data) {
+    CrmUserRole.createCriteria().list(sort: 'user.name', order: 'asc') {
+        resultTransformer CriteriaSpecification.ALIAS_TO_ENTITY_MAP
+        projections {
+            user {
+                property('id', 'id')
+                property('guid', 'guid')
+                property('username', 'username')
+                property('name', 'name')
+                property('email', 'email')
+            }
+        }
+        role {
+            eq('tenantId', data.tenant)
+        }
+    }
+}
+----
+
+== Configuration
+
+The `crm-sales-ui` plugin can be configured with the following parameters.
+
+[options="header"]
+|===
+| Key                      | Description                                                   | Default value
+| crm.currency.default     | Default currency code when `CrmSalesProject.currency` is null | "EUR"
+| crm.sales.probabilities  | List of valid probability options (rendered in <select>)      | [0, 0.2, 0.4, 0.6, 0.8, 1]
+| crm.sales.export.timeout | Timeout (in seconds) waiting for export process to finish     | 60
+|===
 
 == Changes
 
