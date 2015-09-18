@@ -115,7 +115,7 @@ class CrmSalesProjectController {
         def metadata = [:]
         metadata.statusList = CrmSalesProjectStatus.findAllByEnabledAndTenantId(true, tenant)
         metadata.userList = crmSecurityService.getTenantUsers()
-        metadata.probabilityList = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        metadata.probabilityList = grailsApplication.config.crm.sales.probabilities ?: [0, 0.2, 0.4, 0.6, 0.8, 1]
 
         switch (request.method) {
             case 'GET':
@@ -179,7 +179,7 @@ class CrmSalesProjectController {
         def metadata = [:]
         metadata.statusList = CrmSalesProjectStatus.findAllByEnabledAndTenantId(true, tenant)
         metadata.userList = crmSecurityService.getTenantUsers()
-        metadata.probabilityList = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        metadata.probabilityList = grailsApplication.config.crm.sales.probabilities ?: [0, 0.2, 0.4, 0.6, 0.8, 1]
         switch (request.method) {
             case 'GET':
                 return [crmSalesProject: crmSalesProject, metadata: metadata, user: currentUser]
