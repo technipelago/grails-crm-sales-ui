@@ -405,9 +405,10 @@ class CrmSalesProjectController {
         if (request.post) {
             def filename = message(code: 'crmSalesProject.label', default: 'Sales Opportunity')
             try {
+                def timeout = (grailsApplication.config.crm.sales.export.timeout ?: 60) * 1000
                 def topic = params.topic ?: 'export'
                 def result = event(for: ns, topic: topic,
-                        data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(60000)?.value
+                        data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(timeout)?.value
                 if (result?.file) {
                     try {
                         WebUtils.inlineHeaders(response, result.contentType, result.filename ?: ns)
