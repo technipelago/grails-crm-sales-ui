@@ -8,9 +8,8 @@
 
 <body>
 
-<crm:header title="crmSalesProject.list.title" subtitle="Sökningen resulterade i ${crmSalesProjectTotal} st affärer"
-            args="[entityName]">
-</crm:header>
+<crm:header title="crmSalesProject.list.title" subtitle="crmSalesProject.totalCount.label"
+            args="[entityName, crmSalesProjectTotal]"/>
 
 <table class="table table-striped">
     <thead>

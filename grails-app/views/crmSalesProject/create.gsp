@@ -14,6 +14,7 @@
         $("input[name='customer.name']").autocomplete("${createLink(action: 'autocompleteContact', params: [company: true])}", {
             remoteDataType: 'json',
             preventDefaultReturn: true,
+            minChars: 1,
             selectFirst: true,
             queryParamName: 'name',
             useCache: false,

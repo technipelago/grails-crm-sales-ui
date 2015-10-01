@@ -364,7 +364,7 @@
 
 <div class="span3">
 
-    <div class="alert alert-info">
+    <div id="summary" class="alert alert-info">
         <g:render template="summary" model="${[bean: crmSalesProject]}"/>
     </div>
 
