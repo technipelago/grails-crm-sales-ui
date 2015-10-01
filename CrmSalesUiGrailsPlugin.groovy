@@ -1,8 +1,6 @@
-import grails.plugins.crm.sales.CrmSalesProject
-
 class CrmSalesUiGrailsPlugin {
     def groupId = ""
-    def version = "2.4.0-SNAPSHOT"
+    def version = "2.4.0"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmSales']
@@ -11,11 +9,11 @@ class CrmSalesUiGrailsPlugin {
             "src/groovy/grails/plugins/crm/sales/TestSecurityDelegate.groovy",
             "grails-app/views/error.gsp"
     ]
-    def title = "Grails CRM Sales Management UI"
+    def title = "GR8 CRM Sales/Lead Management UI Plugin"
     def author = "Goran Ehrsson"
     def authorEmail = "goran@technipelago.se"
     def description = '''\
-Sales and lead management user interface for GR8 CRM.
+Sales and lead management user interface for GR8 CRM applications.
 '''
     def documentation = "http://gr8crm.github.io/plugins/crm-sales-ui/"
     def license = "APACHE"
