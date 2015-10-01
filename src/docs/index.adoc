@@ -35,6 +35,55 @@ that focus on one specific domain, for example *contact*, *project* or *document
 The `crm-sales-ui` plugin provides a Twitter Bootstrap user interface for managing leads and sales opportunities.
 It depends on the `crm-sales` plugin for low level services and persistence.
 
+image::crm-sales-show.png[Example sales opportunity, role="thumb"]
+
+== CRUD user interface
+
+The plugin provide user interface for creating and updating sales upportunities. It follows the same CRUD workflow
+as other {gr8crm} `-ui` plugins.
+
+=== Create new sales opportunity
+
+You can create a new sales opportunity from all pages where you can search, list or view opportunities.
+Just press the [New Opportunity] button and enter information in the create opportunity form.
+
+image::crm-sales-create.png[Create new sales opportunity]
+
+=== Edit existing sales opportunity
+
+When you view an existing opportunity you can alter information by pressing the [Edit] button.
+
+image::crm-sales-edit.png[Edit existing sales opportunity]
+
+=== Find opportunities
+
+The search form have several input fields where you can enter search criteria. When you hit [Search] you
+will either be presented with a list of matching opportunities or if there is only one match it will be
+displayed immediately.
+
+image::crm-sales-find.png[Search sales opportunities]
+
+=== List opportunities
+
+When you search for opportunities and more than one match you search criteria, a list will displayed where
+you can select an opportunity to view details.
+
+image::crm-sales-list.png[List sales opportunities]
+
+== Project Roles
+
+A sales opportunity can have multiple people assigned to different roles. You can specify the project manager that will
+lead the project, or the sales support staff that are assigned to the project. As an administrator you can add as
+many role types as you want. These roles can then be used to assign people to the sales opportunity.
+
+image::crm-sales-roles.png[Multiple project roles]
+
+To add a role other than customer and contact you press the [Add role] button on the Roles tab. You can add contacts
+already in your address book or create a new contact by entering new name.
+The new contact will be added to your address book when you save the project.
+
+image::crm-sales-role.png[Add new role]
+
 == Sales staff
 
 When creating or updating a sales project you can select the responsible sales representative from a dropdown list.
@@ -80,7 +129,7 @@ The `crm-sales-ui` plugin can be configured with the following parameters.
 
 == Changes
 
-2.0.0:: First public release
+2.4.0:: First public release
 
 == License
 
