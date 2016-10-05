@@ -165,40 +165,66 @@
                         <div class="span3">
                             <div class="row-fluid">
 
-                                <f:field property="date1" label="crmSalesProject.date1.label">
-                                    <div class="input-append date"
-                                         data-date="${formatDate(type: 'date', date: crmSalesProject.date1 ?: new Date())}">
-                                        <g:textField name="date1" class="span11" size="10"
-                                                     value="${formatDate(type: 'date', date: crmSalesProject.date1)}"/><span
-                                            class="add-on"><i class="icon-th"></i></span>
-                                    </div>
-                                </f:field>
-                                <f:field property="date2" label="crmSalesProject.date2.label">
-                                    <div class="input-append date"
-                                         data-date="${formatDate(type: 'date', date: crmSalesProject.date2 ?: new Date())}">
-                                        <g:textField name="date2" class="span11" size="10"
-                                                     value="${formatDate(type: 'date', date: crmSalesProject.date2)}"/><span
-                                            class="add-on"><i class="icon-th"></i></span>
-                                    </div>
-                                </f:field>
+                                <div class="control-group">
+                                    <label class="control-label">
+                                        <g:message code="crmSalesProject.date1.label"/>
+                                    </label>
 
-                                <f:field property="date3" label="crmSalesProject.date3.label">
-                                    <div class="input-append date"
-                                         data-date="${formatDate(type: 'date', date: crmSalesProject.date3 ?: new Date())}">
-                                        <g:textField name="date3" class="span11" size="10"
-                                                     value="${formatDate(type: 'date', date: crmSalesProject.date3)}"/><span
-                                            class="add-on"><i class="icon-th"></i></span>
+                                    <div class="controls">
+                                        <div class="inline input-append date"
+                                             data-date="${formatDate(type: 'date', date: crmSalesProject.date1 ?: new Date())}">
+                                            <g:textField name="date1" class="span10" size="10"
+                                                         value="${formatDate(type: 'date', date: crmSalesProject.date1)}"/><span
+                                                class="add-on"><i
+                                                    class="icon-th"></i></span>
+                                        </div>
                                     </div>
-                                </f:field>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">
+                                        <g:message code="crmSalesProject.date2.label"/>
+                                    </label>
 
-                                <f:field property="date4" label="crmSalesProject.date4.label">
-                                    <div class="input-append date"
-                                         data-date="${formatDate(type: 'date', date: crmSalesProject.date4 ?: new Date())}">
-                                        <g:textField name="date4" class="span11" size="10"
-                                                     value="${formatDate(type: 'date', date: crmSalesProject.date4)}"/><span
-                                            class="add-on"><i class="icon-th"></i></span>
+                                    <div class="controls">
+                                        <div class="inline input-append date"
+                                             data-date="${formatDate(type: 'date', date: crmSalesProject.date2 ?: new Date())}">
+                                            <g:textField name="date2" class="span10" size="10"
+                                                         value="${formatDate(type: 'date', date: crmSalesProject.date2)}"/><span
+                                                class="add-on"><i
+                                                    class="icon-th"></i></span>
+                                        </div>
                                     </div>
-                                </f:field>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">
+                                        <g:message code="crmSalesProject.date3.label"/>
+                                    </label>
+
+                                    <div class="controls">
+                                        <div class="inline input-append date"
+                                             data-date="${formatDate(type: 'date', date: crmSalesProject.date3 ?: new Date())}">
+                                            <g:textField name="date3" class="span10" size="10"
+                                                         value="${formatDate(type: 'date', date: crmSalesProject.date3)}"/><span
+                                                class="add-on"><i
+                                                    class="icon-th"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">
+                                        <g:message code="crmSalesProject.date4.label"/>
+                                    </label>
+
+                                    <div class="controls">
+                                        <div class="inline input-append date"
+                                             data-date="${formatDate(type: 'date', date: crmSalesProject.date4 ?: new Date())}">
+                                            <g:textField name="date4" class="span10" size="10"
+                                                         value="${formatDate(type: 'date', date: crmSalesProject.date4)}"/><span
+                                                class="add-on"><i
+                                                    class="icon-th"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
