@@ -1,6 +1,6 @@
 class CrmSalesUiGrailsPlugin {
     def groupId = ""
-    def version = "2.4.0"
+    def version = "2.4.1-SNAPSHOT"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmSales']
@@ -25,7 +25,7 @@ Sales and lead management user interface for GR8 CRM applications.
         def crmPluginService = applicationContext.crmPluginService
         crmPluginService.registerView('crmMessage', 'index', 'tabs',
                 [id: "crmSalesProject", index: 300, label: "crmSalesProject.label",
-                        template: '/crmSalesProject/messages', plugin: "crm-sales"]
+                        template: '/crmSalesProject/messages', plugin: "crm-sales-ui"]
         )
     }
 }
