@@ -86,6 +86,8 @@
 <div class="span9">
 
 <header class="page-header clearfix">
+    <img src="${resource(dir: 'images', file: 'sales-icon.png')}" class="avatar pull-right"
+         width="64" height="64"/>
     <h1>
         ${crmSalesProject.encodeAsHTML()}
         <crm:favoriteIcon bean="${crmSalesProject}"/>
